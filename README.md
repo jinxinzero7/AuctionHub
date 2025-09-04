@@ -1,6 +1,6 @@
 # AuctionHub - Backend API для системы онлайн-аукционов
 
-[![.NET](https://img.shields.io/badge/.NET-6+-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-9-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql)](https://www.postgresql.org/)
 [![Entity Framework](https://img.shields.io/badge/EF%20Core-512BD4?logo=dotnet)](https://learn.microsoft.com/ef/core/)
 [![SignalR](https://img.shields.io/badge/SignalR-512BD4?logo=dotnet)](https://learn.microsoft.com/aspnet/core/signalr/)
@@ -81,7 +81,7 @@
 
 ## 📁 Структура проекта (кратко)
 
-
+```
 AuctionHub/
 ├── Controllers/           # API контроллеры (Lots, Bids, Auth)
 ├── Models/               # Сущности БД (User, Lot, Bid)
@@ -89,7 +89,7 @@ AuctionHub/
 ├── Hubs/                 # SignalR хабы (LotHub)
 ├── BackgroundServices/   # Фоновые задачи (LotCompletionService)
 └── Migrations/           # Миграции Entity Framework Core
-
+```
 
 ## 👨‍💻 Этапы разработки
 
