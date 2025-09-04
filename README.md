@@ -18,12 +18,12 @@
 
 ## 🛠 Стек технологий
 
-- **Backend**: ASP.NET Core 6+ (Web API)
-- **База данных**: PostgreSQL (возможна адаптация для SQL Server)
+- **Backend**: ASP.NET Core 9 (Web API)
+- **База данных**: PostgreSQL
 - **ORM**: Entity Framework Core (Code-First)
 - **Реальное время**: SignalR
 - **Аутентификация**: JWT Bearer Tokens
-- **Фоновые задачи**: `BackgroundService` (встроенный в ASP.NET Core)
+- **Фоновые задачи**: `BackgroundService`
 
 ## 📋 Функциональность API
 
