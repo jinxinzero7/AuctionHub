@@ -1,13 +1,39 @@
 # AuctionHub - Backend API для системы онлайн-аукционов
 
-[![.NET](https://img.shields.io/badge/.NET-9-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql)](https://www.postgresql.org/)
-[![Entity Framework](https://img.shields.io/badge/EF%20Core-512BD4?logo=dotnet)](https://learn.microsoft.com/ef/core/)
-[![SignalR](https://img.shields.io/badge/SignalR-512BD4?logo=dotnet)](https://learn.microsoft.com/aspnet/core/signalr/)
-
 **AuctionHub** — это высокопроизводительный backend для системы онлайн-аукционов, построенный на ASP.NET Core Web API. Система предоставляет REST API для управления лотами, поддерживает работу со ставками в реальном времени с использованием SignalR, решает проблему конкурентных обновлений и выполняет фоновую обработку задач для завершения торгов.
 
-## 🚀 Ключевые особенности
+## 🛠 Технологический стек
+
+[![.NET](https://img.shields.io/badge/.NET%209-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://learn.microsoft.com/aspnet/core/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Entity Framework](https://img.shields.io/badge/EF%20Core-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://learn.microsoft.com/ef/core/)
+[![SignalR](https://img.shields.io/badge/SignalR-FF6F00?style=for-the-badge&logo=dotnet&logoColor=white)](https://learn.microsoft.com/aspnet/core/signalr/)
+[![JWT](https://img.shields.io/badge/JWT%20Auth-black?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
+[![Background Services](https://img.shields.io/badge/Background%20Services-0052CC?style=for-the-badge&logo=dotnet&logoColor=white)](https://learn.microsoft.com/dotnet/core/extensions/workers)
+
+## 📊 Прогресс разработки
+
+[![Статус](https://img.shields.io/badge/🔰-начало_разработки-orange?style=for-the-badge)](https://github.com/your-repo)
+[![Общий прогресс](https://img.shields.io/badge/общий_прогресс-8%25-red?style=for-the-badge)](https://github.com/your-repo)
+
+### Детализация по этапам
+[![Этап 0](https://img.shields.io/badge/0.Настройка_проекта-30%25-yellow)](https://github.com/your-repo)
+[![Этап 1](https://img.shields.io/badge/1.CRUD_и_аутентификация-5%25-red)](https://github.com/your-repo)
+[![Этап 2](https://img.shields.io/badge/2.Ставки_и_конкурентность-0%25-lightgrey)](https://github.com/your-repo)
+[![Этап 3](https://img.shields.io/badge/3.SignalR-0%25-lightgrey)](https://github.com/your-repo)
+[![Этап 4](https://img.shields.io/badge/4.Фоновые_задачи-0%25-lightgrey)](https://github.com/your-repo)
+[![Этап 5](https://img.shields.io/badge/5.Доработки-0%25-lightgrey)](https://github.com/your-repo)
+
+## 🚩 Реализуемые функции
+
+- 🔑 **Аутентификация** [![10%](https://img.shields.io/badge/10%25-yellow)](https://github.com/your-repo)
+- 🔄 **Управление лотами** [![5%](https://img.shields.io/badge/5%25-red)](https://github.com/your-repo)
+- 💰 **Система ставок** [![0%](https://img.shields.io/badge/0%25-lightgrey)](https://github.com/your-repo)
+- 🚀 **Real-time обновления** [![0%](https://img.shields.io/badge/0%25-lightgrey)](https://github.com/your-repo)
+- ⏳ **Фоновые задачи** [![0%](https://img.shields.io/badge/0%25-lightgrey)](https://github.com/your-repo)
+
+## 🎯 Ключевые особенности
 
 - **RESTful API**: Полный CRUD для лотов и ставок.
 - **Аутентификация JWT**: Безопасная регистрация и аутентификация пользователей.
@@ -15,15 +41,6 @@
 - **Конкурентный контроль**: Специально реализованный механизм для предотвращения "гонки ставок".
 - **Фоновые службы**: Автоматическое определение победителей и завершение лотов по расписанию.
 - **Пагинация и сортировка**: Для эффективной работы со списками лотов.
-
-## 🛠 Стек технологий
-
-- **Backend**: ASP.NET Core 9 (Web API)
-- **База данных**: PostgreSQL
-- **ORM**: Entity Framework Core (Code-First)
-- **Реальное время**: SignalR
-- **Аутентификация**: JWT Bearer Tokens
-- **Фоновые задачи**: `BackgroundService`
 
 ## 📋 Функциональность API
 
@@ -79,14 +96,6 @@
 5. **Откройте Swagger**:
    - Перейдите по адресу `https://localhost:7000/swagger` (или другому порту, указанному в консоли).
 
-## 👨‍💻 Этапы разработки
-
-Проект разрабатывается в соответствии с техническим заданием по этапам:
-1. Настройка проекта и инфраструктуры (EF Core, JWT).
-2. Реализация базового CRUD для лотов и системы аутентификации.
-3. Разработка системы ставок с обработкой конкурентности.
-4. Интеграция SignalR для real-time уведомлений.
-5. Реализация фоновой службы для завершения лотов.
 6. Доработка: пагинация, глобальная обработка ошибок, деплой.
 
 ---
