@@ -14,6 +14,7 @@ namespace Domain.Models
         public string PasswordHash { get; set; }
         public string PasswordSalt { get; set; }
         public List<Lot> CreatedLots { get; set; } = new();
+        public List<Lot> WonLots { get; set; } = new();
         public List<Bid> Bids { get; set; } = new();
     }
 }
