@@ -10,8 +10,12 @@ using static Infrastructure.AuctionDbContext;
 
 namespace Infrastructure
 {
-    public class AuctionDbContext(DbContextOptions<AuctionDbContext> options) : DbContext(options)
+    public class AuctionDbContext : DbContext
     {
+        public AuctionDbContext(DbContextOptions options) : base(options)
+        {
+        }
+
         // Таблицы сущностей
         public DbSet<Lot> Lots { get; set; }
         public DbSet<Bid> Bids { get; set; }
