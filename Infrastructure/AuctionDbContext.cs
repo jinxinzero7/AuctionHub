@@ -58,12 +58,13 @@ namespace Infrastructure
                 .HasMaxLength(50);
 
             builder.Property(u => u.PasswordHash)
-            .IsRequired();
+                .IsRequired();
 
             builder.Property(u => u.PasswordSalt)
                 .IsRequired();
 
             // Индексы для часто используемых полей
+
             builder.HasIndex(u => u.Username).IsUnique();
             builder.HasIndex(u => u.Email).IsUnique();
         }
@@ -146,7 +147,7 @@ namespace Infrastructure
                 .IsRequired();
 
             builder.HasOne(b => b.Bidder)
-                .WithMany(b => b.Bids)
+                .WithMany(u => u.Bids)
                 .HasForeignKey(b => b.BidderId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired();
