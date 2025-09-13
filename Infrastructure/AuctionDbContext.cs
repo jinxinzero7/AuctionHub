@@ -64,9 +64,6 @@ namespace Infrastructure
             builder.Property(u => u.PasswordHash)
                 .IsRequired();
 
-            builder.Property(u => u.PasswordSalt)
-                .IsRequired();
-
             // Индексы для часто используемых полей
 
             builder.HasIndex(u => u.Username).IsUnique();

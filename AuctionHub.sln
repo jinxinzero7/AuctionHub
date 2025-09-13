@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{1AB43116-1B9F-4705-8BAB-1EC8861AEE2E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtProvider", "JwtProvider\JwtProvider.csproj", "{7F19C858-AE92-41D4-9B53-B38A5500CF3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PasswordHashProvider", "PasswordHashProvider\PasswordHashProvider.csproj", "{EE0FF5CB-DA8C-406C-8167-B806A9434626}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{1AB43116-1B9F-4705-8BAB-1EC8861AEE2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AB43116-1B9F-4705-8BAB-1EC8861AEE2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AB43116-1B9F-4705-8BAB-1EC8861AEE2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F19C858-AE92-41D4-9B53-B38A5500CF3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F19C858-AE92-41D4-9B53-B38A5500CF3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F19C858-AE92-41D4-9B53-B38A5500CF3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F19C858-AE92-41D4-9B53-B38A5500CF3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE0FF5CB-DA8C-406C-8167-B806A9434626}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE0FF5CB-DA8C-406C-8167-B806A9434626}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE0FF5CB-DA8C-406C-8167-B806A9434626}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE0FF5CB-DA8C-406C-8167-B806A9434626}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
