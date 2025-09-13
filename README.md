@@ -14,24 +14,24 @@
 
 ## 📊 Прогресс разработки
 
-[![Статус](https://img.shields.io/badge/🔰-начало_разработки-orange?style=for-the-badge)](https://github.com/your-repo)
-[![Общий прогресс](https://img.shields.io/badge/общий_прогресс-8%25-red?style=for-the-badge)](https://github.com/your-repo)
+[![Статус](https://img.shields.io/badge/🔰-активная_разработка-yellowgreen?style=for-the-badge)](https://github.com/jinxinzero7/AuctionHub)
+[![Общий прогресс](https://img.shields.io/badge/общий_прогресс-25%25-yellow?style=for-the-badge)](https://github.com/jinxinzero7/AuctionHub)
 
 ### Детализация по этапам
-[![Этап 0](https://img.shields.io/badge/0.Настройка_проекта-30%25-yellow)](https://github.com/your-repo)
-[![Этап 1](https://img.shields.io/badge/1.CRUD_и_аутентификация-5%25-red)](https://github.com/your-repo)
-[![Этап 2](https://img.shields.io/badge/2.Ставки_и_конкурентность-0%25-lightgrey)](https://github.com/your-repo)
-[![Этап 3](https://img.shields.io/badge/3.SignalR-0%25-lightgrey)](https://github.com/your-repo)
-[![Этап 4](https://img.shields.io/badge/4.Фоновые_задачи-0%25-lightgrey)](https://github.com/your-repo)
-[![Этап 5](https://img.shields.io/badge/5.Доработки-0%25-lightgrey)](https://github.com/your-repo)
+[![Этап 0](https://img.shields.io/badge/0.Настройка_проекта-100%25-brightgreen)](https://github.com/jinxinzero7/AuctionHub)
+[![Этап 1](https://img.shields.io/badge/1.CRUD_и_аутентификация-60%25-yellowgreen)](https://github.com/jinxinzero7/AuctionHub)
+[![Этап 2](https://img.shields.io/badge/2.Ставки_и_конкурентность-0%25-lightgrey)](https://github.com/jinxinzero7/AuctionHub)
+[![Этап 3](https://img.shields.io/badge/3.SignalR-0%25-lightgrey)](https://github.com/jinxinzero7/AuctionHub)
+[![Этап 4](https://img.shields.io/badge/4.Фоновые_задачи-0%25-lightgrey)](https://github.com/jinxinzero7/AuctionHub)
+[![Этап 5](https://img.shields.io/badge/5.Доработки-0%25-lightgrey)](https://github.com/jinxinzero7/AuctionHub)
 
 ## 🚩 Реализуемые функции
 
-- 🔑 **Аутентификация** [![10%](https://img.shields.io/badge/10%25-yellow)](https://github.com/your-repo)
-- 🔄 **Управление лотами** [![5%](https://img.shields.io/badge/5%25-red)](https://github.com/your-repo)
-- 💰 **Система ставок** [![0%](https://img.shields.io/badge/0%25-lightgrey)](https://github.com/your-repo)
-- 🚀 **Real-time обновления** [![0%](https://img.shields.io/badge/0%25-lightgrey)](https://github.com/your-repo)
-- ⏳ **Фоновые задачи** [![0%](https://img.shields.io/badge/0%25-lightgrey)](https://github.com/your-repo)
+- 🔑 **Аутентификация** [![100%](https://img.shields.io/badge/100%25-brightgreen)](https://github.com/jinxinzero7/AuctionHub)
+- 🔄 **Управление лотами** [![10%](https://img.shields.io/badge/10%25-red)](https://github.com/jinxinzero7/AuctionHub)
+- 💰 **Система ставок** [![0%](https://img.shields.io/badge/0%25-lightgrey)](https://github.com/jinxinzero7/AuctionHub)
+- 🚀 **Real-time обновления** [![0%](https://img.shields.io/badge/0%25-lightgrey)](https://github.com/jinxinzero7/AuctionHub)
+- ⏳ **Фоновые задачи** [![0%](https://img.shields.io/badge/0%25-lightgrey)](https://github.com/jinxinzero7/AuctionHub)
 
 ## 🎯 Ключевые особенности
 
