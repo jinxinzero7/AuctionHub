@@ -1,8 +1,8 @@
 ﻿using Application.DTOs;
-using Domain.Interfaces;
 using Domain.Interfaces.DTOInterfaces;
 using Domain.Interfaces.Jwt;
 using Domain.Interfaces.PassHasher;
+using Domain.Interfaces.User;
 using Domain.Models;
 using System;
 using System.Collections.Generic;

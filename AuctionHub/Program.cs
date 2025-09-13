@@ -1,7 +1,7 @@
 using Application.Services;
-using Domain.Interfaces;
 using Domain.Interfaces.Jwt;
 using Domain.Interfaces.PassHasher;
+using Domain.Interfaces.User;
 using Infrastructure;
 using Infrastructure.Repositories;
 using JwtProvider;
