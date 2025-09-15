@@ -20,6 +20,6 @@ namespace Application.DTOs
         public DateTime EndDate { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsCompleted { get; set; }
-        public List<Bid> Bids { get; set; }
+        public List<Bid>? Bids { get; set; }
     }
 }

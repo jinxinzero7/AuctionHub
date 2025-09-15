@@ -12,7 +12,7 @@ namespace Domain.Interfaces
         Task<ILotResponse> CreateLotAsync(ILotCreateRequest request);
         Task<ILotResponse> GetLotByIdAsync(Guid id);
         Task<IEnumerable<ILotResponse>> GetLotsByCreatorIdAsync(Guid creatorId);
-        Task<ILotResponse> UpdateLotAsync(Guid id, ILotUpdateRequest request);
-        Task DeleteLotAsync(Guid id);
+        Task<ILotResponse> UpdateLotByIdAsync(Guid id, ILotUpdateRequest request);
+        Task<bool> DeleteLotAsync(Guid id);
     }
 }

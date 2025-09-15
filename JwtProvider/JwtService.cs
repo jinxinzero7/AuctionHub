@@ -16,11 +16,15 @@ namespace JwtProvider
             var claims = new List<Claim>
             {
                 new Claim("id", user.Id.ToString()),
-                new Claim("userName", user.Username),
-                new Claim("email", user.Email)
+                new Claim("userName", user.Username ?? throw new ArgumentNullException("Username is required")),
+                new Claim("email", user.Email ?? throw new ArgumentNullException("Email is required")),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString())
             };
 
             var jwtToken = new JwtSecurityToken(
+                issuer: options.Value.Issuer,
+                audience: options.Value.Audience,
                 expires: DateTime.UtcNow.Add(options.Value.Expires),
                 claims: claims,
                 signingCredentials:

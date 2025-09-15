@@ -1,5 +1,5 @@
 using Application.DTOs;
-using Domain.Interfaces.User;
+using Domain.Interfaces;
 using Domain.Models;
 using Infrastructure;
 using Microsoft.AspNetCore.Authorization;

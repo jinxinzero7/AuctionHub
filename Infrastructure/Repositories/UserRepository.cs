@@ -1,4 +1,4 @@
-﻿using Domain.Interfaces.User;
+﻿using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;

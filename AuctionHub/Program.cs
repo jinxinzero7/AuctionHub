@@ -1,9 +1,10 @@
 using Application.Services;
+using Domain.Interfaces;
 using Domain.Interfaces.Jwt;
 using Domain.Interfaces.PassHasher;
-using Domain.Interfaces.User;
 using Infrastructure;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using JwtProvider;
 using Microsoft.EntityFrameworkCore;
 using PasswordHashProvider;
@@ -16,10 +17,11 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IJwtService, JwtService>();
-builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddJwtProvider();
+builder.Services.AddInfrastructure();
+builder.Services.AddPasswordHashProvider();
 
 
 builder.Services.Configure<AuthSettings>(
