@@ -13,7 +13,7 @@ namespace AuctionHub.Controllers
         private readonly ILotService _lotService;
         public LotController(ILotService lotService)
         {
-            _lotService = lotService;
+            _lotService = lotService; 
         }
 
         [HttpPost]
