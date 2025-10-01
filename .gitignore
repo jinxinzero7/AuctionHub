@@ -1,53 +1,57 @@
-## Игнорировать файлы сборки и запуска ##
-bin/
-obj/
+## .NET Core ##
+**/bin/
+**/obj/
 *.exe
 *.dll
 *.pdb
 *.cache
 *.config
 
-## Игнорировать файлы пользовательских настроек ##
+# Исключение: launch settings должны отслеживаться
+!Properties/launchSettings.json
+
+## IDE ##
+.vs/
+.idea/
+.vscode/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
 
-## Игнорировать папки IDE ##
-.vs/
-.idea/
-.vscode/
-
-## Игнорировать файлы пакетов NuGet ##
+## NuGet ##
 packages/
 *.nupkg
 NuGet.exe
 
-## Игнорировать резервные копии и временные файлы ##
+## Backup files ##
 *~
 *.swp
 *.swo
 
-## Игнорировать результаты тестов ##
+## Test results ##
 TestResults/
 *.trx
 
-## Игнорировать файлы публикации ##
+## Publish output ##
 publish/
 
-## Игнорировать файлы логов ##
+## Logs ##
 *.log
 logs/
 
-## Игнорировать файлы операционной системы ##
+## OS generated files ##
 Thumbs.db
 .DS_Store
 
-## Игнорировать файлы Azure ##
-azure-pipelines.yml
-
-## Игнорировать файлы Rider ##
+## Rider ##
 *.sln.iml
 
-## Игнорировать файлы проектов ##
+## Project files ##
 *.csproj.user
+
+# Local History for Visual Studio
+.localhistory/
+
+# BeatPulse healthcheck temp database
+healthchecksdb
