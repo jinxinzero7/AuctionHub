@@ -15,9 +15,9 @@ namespace Infrastructure
     {
         public AuctionDbContext CreateDbContext(string[] args)
         {
-            var basePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\.."));
+            var basePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "../.."));
 
-            var auctionHubPath = Path.Combine(basePath, "AuctionHub", "AuctionHub", "AuctionHub");
+            var auctionHubPath = Path.Combine(basePath, "AuctionHub", "AuctionHub");
 
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(auctionHubPath)
