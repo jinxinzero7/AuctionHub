@@ -32,6 +32,21 @@ namespace Infrastructure.Services
             var currentUser = await _userRepository.GetUserByIdAsync(currentUserId);
             var currentLot = await _lotRepository.GetLotByIdAsync(lotId);
 
+            if (currentLot == null)
+                throw new ArgumentException("Ошибка: Лот не найден");
+
+            if (currentLot.IsCompleted || currentLot.EndDate < DateTime.UtcNow)
+                throw new InvalidOperationException("Ошибка: Аукцион завершен");
+
+            if (currentLot.CreatorId == currentUserId)
+                throw new InvalidOperationException("Ошибка: Нельзя делать ставки на свои лоты");
+
+            var currentPrice = currentLot.CurrentPrice ?? currentLot.StartingPrice;
+            var minimumBid = currentPrice + currentLot.BidIncrement;
+        
+            if (request.Amount < minimumBid)
+                throw new InvalidOperationException($"Ошибка: Минимальная ставка: {minimumBid}");
+
             var newBid = new Bid
             {
                 Id = Guid.NewGuid(),
@@ -43,10 +58,14 @@ namespace Infrastructure.Services
                 Bidder = currentUser
             };
 
+            currentLot.CurrentPrice = request.Amount;
+            await _lotRepository.UpdateLotAsync(currentLot);
+
             await _bidRepository.CreateBidAsync(newBid);
 
             var bidResponse = new BidResponse
             {
+                Id = newBid.Id,
                 Amount = newBid.Amount,
                 Timestamp = newBid.Timestamp,
                 BidderId = newBid.BidderId
@@ -54,12 +73,13 @@ namespace Infrastructure.Services
 
             return bidResponse;
         }
-        public async Task<IBidResponse> GetBidByIdAsync(Guid id)
+        public async Task<IBidResponse> GetBidByIdAsync(Guid lotId, Guid bidId)
         {
-            var bid = await _bidRepository.GetBidByIdAsync(id);
+            var bid = await _bidRepository.GetBidByIdAsync(lotId, bidId);
 
             var bidResponse = new BidResponse
             {
+                Id = bid.Id,
                 Amount = bid.Amount,
                 Timestamp = bid.Timestamp,
                 BidderId = bid.BidderId
@@ -71,14 +91,20 @@ namespace Infrastructure.Services
             var bids = await _bidRepository.GetBidsByLotIdAsync(lotId);
             return bids.Select(b => new BidResponse
             {
+                Id = b.Id,
                 Amount = b.Amount,
                 Timestamp = b.Timestamp,
                 BidderId = b.BidderId
-            }).ToList();
+            }).OrderByDescending(b => b.Amount).ToList();
         }
-        public async Task<bool> DeleteBidByIdAsync(Guid id)
+        public async Task<bool> DeleteBidByIdAsync(Guid lotId, Guid bidId)
         {
-            var bid = await _bidRepository.GetBidByIdAsync(id);
+            var currentUserId = _currentUserService.GetCurrentUserId();
+            var bid = await _bidRepository.GetBidByIdAsync(lotId, bidId);
+
+            if (currentUserId != bid.BidderId)
+                return false;
+            
             await _bidRepository.DeleteBidAsync(bid);
             return true;
         }
