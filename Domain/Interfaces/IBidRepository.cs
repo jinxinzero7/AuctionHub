@@ -8,7 +8,7 @@ namespace Domain.Interfaces
 {
     public interface IBidRepository
     {
-        Task<Bid> GetBidByIdAsync(Guid id);
+        Task<Bid> GetBidByIdAsync(Guid lotId, Guid bidId);
         Task<IEnumerable<Bid>> GetBidsByLotIdAsync(Guid lotId);
         Task<Bid> CreateBidAsync(Bid bid);
         Task UpdateBidAsync(Bid bid);
