@@ -9,8 +9,8 @@ namespace Domain.Interfaces
     public interface IBidService
     {
         Task<IBidResponse> CreateBidAsync(Guid lotId, IBidCreateRequest request);
-        Task<IBidResponse> GetBidByIdAsync(Guid id);
+        Task<IBidResponse> GetBidByIdAsync(Guid lotId, Guid bidId);
         Task<IEnumerable<IBidResponse>> GetBidsByLotIdAsync(Guid lotId);
-        Task<bool> DeleteBidByIdAsync(Guid id);
+        Task<bool> DeleteBidByIdAsync(Guid lotId, Guid bidId);
     }
 }
