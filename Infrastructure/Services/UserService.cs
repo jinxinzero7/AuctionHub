@@ -4,6 +4,7 @@ using Domain.Interfaces.DTOInterfaces;
 using Domain.Interfaces.Jwt;
 using Domain.Interfaces.PassHasher;
 using Domain.Models;
+using Domain.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,20 +28,35 @@ namespace Application.Services
             _jwtService = jwtService;
         }
 
-        public async Task<IUserResponse> RegisterAsync(IRegisterUserRequest request)
+        public async Task<Result<IUserResponse>> RegisterAsync(IRegisterUserRequest request)
         {
-            ArgumentNullException.ThrowIfNull(request, nameof(request));
+            if (request == null)
+                return Result.Failure<IUserResponse>("Request cannot be null");
+
+            if (string.IsNullOrWhiteSpace(request.Username))
+                return Result.Failure<IUserResponse>("Username is required");
+                
+            if (string.IsNullOrWhiteSpace(request.Email))
+                return Result.Failure<IUserResponse>("Email is required");
+
+            if (string.IsNullOrWhiteSpace(request.Password))
+                return Result.Failure<IUserResponse>("Password is required");
+
+            if (request.Password.Length < 6)
+                return Result.Failure<IUserResponse>("Password must be at least 6 characters");
 
             if (await _userRepository.GetUserByEmailAsync(request.Email) != null)
-            {
-                throw new InvalidOperationException($"User with email '{request.Email}' already exists.");
-            }
+                {
+                    return Result.Failure<IUserResponse>($"User with email '{request.Email}' already exists.");
+                }
+
             var newUser = new User
             {
                 Id = Guid.NewGuid(),
                 Email = request.Email,
                 Username = request.Username,
             };
+
 
             newUser.PasswordHash = _passwordHasher.HashPassword(newUser, request.Password);
 
@@ -54,52 +70,69 @@ namespace Application.Services
                 Username = newUser.Username
             };
 
-            return userResponse;
+            return Result.Success<IUserResponse>(userResponse);
 
         }
-        public async Task<string> LoginAsync(ILoginUserRequest request)
+        public async Task<Result<string>> LoginAsync(ILoginUserRequest request)
         {
             //проверка пустого req
-            ArgumentNullException.ThrowIfNull(request, nameof(request));
+            if (request == null)
+                return Result.Failure<string>("Request cannot be null");
+                
+            if (string.IsNullOrWhiteSpace(request.Email))
+                return Result.Failure<string>("Invalid email or password");
+
+            if (string.IsNullOrWhiteSpace(request.Password))
+                return Result.Failure<string>("Invalid email or password");
 
             //проверка существования user с email из request
             var existingUser = await _userRepository.GetUserByEmailAsync(request.Email);
             if (existingUser == null)
             {
-                throw new InvalidOperationException($"User with email '{request.Email}' doesn't exist.");
+                return Result.Failure<string>("Invalid email or password");
             }
 
             if (_passwordHasher.VerifyHashedPassword(existingUser, existingUser.PasswordHash, request.Password))
             {
-                return _jwtService.GenerateToken(existingUser);
+                string token = _jwtService.GenerateToken(existingUser);
+                return Result.Success(token);
             }
             else
             {
-                throw new InvalidOperationException("Wrong password.");
+                return Result.Failure<string>("Invalid email or password");
             }
         }
 
-        public async Task<IUserResponse> GetUserAsync(Guid userId)
+        public async Task<Result<IUserResponse>> GetUserAsync(Guid userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
-                throw new ArgumentException("User not found");
+                return Result.Failure<IUserResponse>("User not found");
             }
-            return new UserResponse
+            var userResponse = new UserResponse
             {
                 Id = user.Id,
                 Email = user.Email,
                 Username = user.Username
             };
+            return Result.Success<IUserResponse>(userResponse);
         }
 
-        public async Task<IUserResponse> UpdateUserAsync(Guid userId, IUpdateUserRequest request)
+        public async Task<Result<IUserResponse>> UpdateUserAsync(Guid userId, IUpdateUserRequest request)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
-                throw new ArgumentException("User not found");
+                return Result.Failure<IUserResponse>("User not found");
+            }
+
+            // Проверка занятости email, если он меняется
+            if (request.Email != null && request.Email != user.Email)
+            {
+                var existingUser = await _userRepository.GetUserByEmailAsync(request.Email);
+                if (existingUser != null)
+                    return Result.Failure<IUserResponse>($"Email '{request.Email}' is already taken");
             }
 
             if (request.Username != null)
@@ -111,23 +144,26 @@ namespace Application.Services
 
             await _userRepository.UpdateUserAsync(user);
 
-            return new UserResponse
+            var userResponse = new UserResponse
             {
                 Id = user.Id,
                 Email = user.Email,
                 Username = user.Username
             };
+            return Result.Success<IUserResponse>(userResponse);
         }
 
-        public async Task<IEnumerable<IUserResponse>> GetAllUsersAsync()
+        public async Task<Result<IEnumerable<IUserResponse>>> GetAllUsersAsync()
         {
             var users = await _userRepository.GetAllUsersAsync();
-            return users.Select(user => new UserResponse
+            var usersResponse = users.Select(user => new UserResponse
             {
                 Id = user.Id,
                 Email = user.Email,
                 Username = user.Username
             }).ToList();
+
+            return Result.Success<IEnumerable<IUserResponse>>(usersResponse);
         }
     }
 }
