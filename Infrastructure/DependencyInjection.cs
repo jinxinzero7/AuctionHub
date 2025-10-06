@@ -23,6 +23,8 @@ namespace Infrastructure
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<ILotService, LotService>();
+            services.AddScoped<IBidService, BidService>();
+            services.AddScoped<IBidRepository, BidRepository>();
             return services;
         }
     }
