@@ -23,14 +23,19 @@ namespace AuctionHub.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest request)
         {
             var result = await _userService.RegisterAsync(request);
-            return Ok(result);
+            if (result.IsSuccess)
+                return Ok(result.Value);
+            return BadRequest(result.Error);
         }
 
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginUserRequest request)
         {
-            return Ok(await _userService.LoginAsync(request));
+            var result = await _userService.LoginAsync(request);
+            if (result.IsSuccess)
+                return Ok(result.Value);
+            return BadRequest(result.Error);
         }
         
     }
