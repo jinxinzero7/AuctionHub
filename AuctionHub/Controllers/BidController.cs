@@ -27,27 +27,31 @@ namespace AuctionHub.Controllers
         public async Task<IActionResult> CreateBid(Guid lotId, [FromBody] BidCreateRequest request)
         {
             var result = await _bidService.CreateBidAsync(lotId, request);
-            return CreatedAtAction(nameof(GetBidById), new { lotId = lotId, bidId = result.Id }, result);
+
+            if (result.IsFailure)
+                return BadRequest(result.Error);
+
+            return CreatedAtAction(nameof(GetBidById), new { lotId = lotId, bidId = result.Value.Id }, result);
         }
 
         [HttpGet("{bidId:guid}")]
         [Authorize]
         public async Task<IActionResult> GetBidById(Guid lotId, Guid bidId)
         {
-            var bid = await _bidService.GetBidByIdAsync(lotId, bidId);
-            if (bid == null)
-                return NotFound();
-            return Ok(bid);
+            var result = await _bidService.GetBidByIdAsync(lotId, bidId);
+            if (result.IsFailure)
+                return NotFound(result.Error);
+            return Ok(result.Value);
         }
 
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetBids(Guid lotId)
         {
-            var bids = await _bidService.GetBidsByLotIdAsync(lotId);
-            if (bids == null)
-                return NotFound();
-            return Ok(bids);
+            var result = await _bidService.GetBidsByLotIdAsync(lotId);
+            if (result.IsFailure)
+                return NotFound(result.Error);
+            return Ok(result.Value);
         }
 
         [HttpDelete("{bidId:guid}")]
@@ -55,9 +59,9 @@ namespace AuctionHub.Controllers
         public async Task<IActionResult> DeleteBid(Guid lotId, Guid bidId)
         {
             var result = await _bidService.DeleteBidByIdAsync(lotId, bidId);
-            if (!result)
-                return BadRequest();
-            return Ok(result);
+            if (result.IsFailure)
+                return BadRequest(result.Error);
+            return Ok(result.IsSuccess);
         }
     }
 }

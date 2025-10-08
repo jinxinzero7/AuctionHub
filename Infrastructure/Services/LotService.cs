@@ -2,6 +2,7 @@
 using Domain.Interfaces;
 using Domain.Interfaces.DTOInterfaces;
 using Domain.Models;
+using Domain.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace Application.Services
             _userRepository = userRepository;
         }
         
-        public async Task<ILotResponse> CreateLotAsync(ILotCreateRequest request)
+        public async Task<Result<ILotResponse>> CreateLotAsync(ILotCreateRequest request)
         {
             var currentUserId = _currentUserService.GetCurrentUserId();
             var currentUser = await _userRepository.GetUserByIdAsync(currentUserId);
@@ -66,12 +67,12 @@ namespace Application.Services
 
             };
 
-            return lotResponse;
+            return Result.Success<ILotResponse>(lotResponse);
         }
-        public async Task<ILotResponse> GetLotByIdAsync(Guid id)
+        public async Task<Result<ILotResponse>> GetLotByIdAsync(Guid id)
         {
             var lot = await _lotRepository.GetLotByIdAsync(id);
-            return new LotResponse
+            var lotResponse = new LotResponse
             {
                 Id = lot.Id,
                 Title = lot.Title,
@@ -85,11 +86,12 @@ namespace Application.Services
                 IsCompleted = lot.IsCompleted,
                 Bids = lot.Bids
             };
+            return Result.Success<ILotResponse>(lotResponse);
         }
-        public async Task<IEnumerable<ILotResponse>> GetLotsByCreatorIdAsync(Guid creatorId)
+        public async Task<Result<IEnumerable<ILotResponse>>> GetLotsByCreatorIdAsync(Guid creatorId)
         {
             var lots = await _lotRepository.GetLotsByCreatorIdAsync(creatorId);
-            return lots.Select(l => new LotResponse
+            var lotsResponse = lots.Select(l => new LotResponse
             {
                 Id = l.Id,
                 Title = l.Title,
@@ -103,14 +105,20 @@ namespace Application.Services
                 IsCompleted = l.IsCompleted,
                 Bids = l.Bids
             }).ToList();
+
+            return Result.Success<IEnumerable<ILotResponse>>(lotsResponse);
         }
-        public async Task<ILotResponse> UpdateLotByIdAsync(Guid id, ILotUpdateRequest request)
+        public async Task<Result<ILotResponse>> UpdateLotByIdAsync(Guid id, ILotUpdateRequest request)
         {
             var lot = await _lotRepository.GetLotByIdAsync(id);
-            if(lot.Bids != null && lot.Bids.Any())
-            {
-                throw new ArgumentException("A lot cannot be changed if it has bids");
-            }
+
+            if (lot == null)
+                return Result.Failure<ILotResponse>("Ошибка: Лот не найден");
+
+            if (lot.Bids != null && lot.Bids.Any())
+                return Result.Failure<ILotResponse>("Ошибка: Лот не может быть изменен если у него уже есть ставки");
+            
+
 
             lot.Title = request.Title;
             lot.Description = request.Description;
@@ -121,7 +129,7 @@ namespace Application.Services
 
             await _lotRepository.UpdateLotAsync(lot);
 
-            return new LotResponse
+            var lotResponse = new LotResponse
             {
                 Id = lot.Id,
                 Title = lot.Title,
@@ -133,14 +141,17 @@ namespace Application.Services
                 EndDate = lot.EndDate,
                 ImageUrl = lot.ImageUrl,
                 IsCompleted = lot.IsCompleted,
-                Bids = null
+                Bids = []
             };
+            
+            return Result.Success<ILotResponse>(lotResponse);
         }
-        public async Task<bool> DeleteLotAsync(Guid id)
+        public async Task<Result> DeleteLotAsync(Guid id)
         {
             var @lot = await _lotRepository.GetLotByIdAsync(id);
             await _lotRepository.DeleteLotAsync(lot);
-            return true;
+            var result = Result.Success();
+            return result;
         }
         
     }

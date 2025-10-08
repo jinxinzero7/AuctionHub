@@ -7,6 +7,7 @@ using Domain.Interfaces.DTOInterfaces;
 using Domain.Models;
 using Application.DTOs;
 using Microsoft.EntityFrameworkCore.Storage;
+using Domain.Results;
 
 namespace Infrastructure.Services
 {
@@ -26,26 +27,26 @@ namespace Infrastructure.Services
             _lotRepository = lotRepository;
         }
 
-        public async Task<IBidResponse> CreateBidAsync(Guid lotId, IBidCreateRequest request)
+        public async Task<Result<IBidResponse>> CreateBidAsync(Guid lotId, IBidCreateRequest request)
         {
             var currentUserId = _currentUserService.GetCurrentUserId();
             var currentUser = await _userRepository.GetUserByIdAsync(currentUserId);
             var currentLot = await _lotRepository.GetLotByIdAsync(lotId);
 
             if (currentLot == null)
-                throw new ArgumentException("Ошибка: Лот не найден");
+                return Result.Failure<IBidResponse>("Ошибка: Лот не найден"); // как надо
 
             if (currentLot.IsCompleted || currentLot.EndDate < DateTime.UtcNow)
-                throw new InvalidOperationException("Ошибка: Аукцион завершен");
+                return Result.Failure<IBidResponse>("Ошибка: Аукцион завершен"); // как было
 
             if (currentLot.CreatorId == currentUserId)
-                throw new InvalidOperationException("Ошибка: Нельзя делать ставки на свои лоты");
+                return Result.Failure<IBidResponse>("Ошибка: Нельзя делать ставки на свои лоты");
 
             var currentPrice = currentLot.CurrentPrice ?? currentLot.StartingPrice;
             var minimumBid = currentPrice + currentLot.BidIncrement;
         
             if (request.Amount < minimumBid)
-                throw new InvalidOperationException($"Ошибка: Минимальная ставка: {minimumBid}");
+                return Result.Failure<IBidResponse>($"Ошибка: Минимальная ставка: {minimumBid}");
 
             var newBid = new Bid
             {
@@ -71,11 +72,14 @@ namespace Infrastructure.Services
                 BidderId = newBid.BidderId
             };
 
-            return bidResponse;
+            return Result.Success<IBidResponse>(bidResponse);
         }
-        public async Task<IBidResponse> GetBidByIdAsync(Guid lotId, Guid bidId)
+        public async Task<Result<IBidResponse>> GetBidByIdAsync(Guid lotId, Guid bidId)
         {
             var bid = await _bidRepository.GetBidByIdAsync(lotId, bidId);
+
+            if(bid == null)
+                return Result.Failure<IBidResponse>("Ошибка: Ставка не найдена");
 
             var bidResponse = new BidResponse
             {
@@ -84,29 +88,38 @@ namespace Infrastructure.Services
                 Timestamp = bid.Timestamp,
                 BidderId = bid.BidderId
             };
-            return bidResponse;
+            return Result.Success<IBidResponse>(bidResponse);
         }
-        public async Task<IEnumerable<IBidResponse>> GetBidsByLotIdAsync(Guid lotId)
+        public async Task<Result<IEnumerable<IBidResponse>>> GetBidsByLotIdAsync(Guid lotId)
         {
             var bids = await _bidRepository.GetBidsByLotIdAsync(lotId);
-            return bids.Select(b => new BidResponse
+
+            if(bids == null)
+                return Result.Failure<IEnumerable<IBidResponse>>("Ставки по данному лоту не найдены");
+
+            var bidsResponse = bids.Select(b => new BidResponse
             {
                 Id = b.Id,
                 Amount = b.Amount,
                 Timestamp = b.Timestamp,
                 BidderId = b.BidderId
             }).OrderByDescending(b => b.Amount).ToList();
+
+            return Result.Success<IEnumerable<IBidResponse>>(bidsResponse);
         }
-        public async Task<bool> DeleteBidByIdAsync(Guid lotId, Guid bidId)
+        public async Task<Result> DeleteBidByIdAsync(Guid lotId, Guid bidId)
         {
             var currentUserId = _currentUserService.GetCurrentUserId();
             var bid = await _bidRepository.GetBidByIdAsync(lotId, bidId);
 
+            if (bid == null)
+                return Result.Failure("Ошибка: Ставка не найдена");
+
             if (currentUserId != bid.BidderId)
-                return false;
+                    return Result.Failure("Ошибка: Вы не являетесь владельцем ставки и поэтому не можете ее удалить");
             
             await _bidRepository.DeleteBidAsync(bid);
-            return true;
+            return Result.Success();
         }
     }
 }
