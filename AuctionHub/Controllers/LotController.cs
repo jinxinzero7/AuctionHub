@@ -21,40 +21,40 @@ namespace AuctionHub.Controllers
         public async Task<IActionResult> CreateLot([FromBody] LotCreateRequest request)
         {
             var result = await _lotService.CreateLotAsync(request);
-            return CreatedAtAction(nameof(GetLotById), new { id = result.Id }, result);
+            if (result.IsSuccess)
+                return CreatedAtAction(nameof(GetLotById), new { id = result.Value.Id }, result);
+            return BadRequest(result.Error);
         }
 
         [HttpGet("{id:guid}")]
         [Authorize]
         public async Task<IActionResult> GetLotById(Guid id)
         {
-            var lot = await _lotService.GetLotByIdAsync(id);
-            if (lot == null)
-                return NotFound();
+            var result = await _lotService.GetLotByIdAsync(id);
+            if (result.IsFailure)
+                return NotFound(result.Error);
 
-            return Ok(lot);
+            return Ok(result.Value);
         }
 
         [HttpGet("creator/{creatorId:guid}")]
         [Authorize]
         public async Task<IActionResult> GetLotsByCreatorId(Guid creatorId)
         {
-            var lots = await _lotService.GetLotsByCreatorIdAsync(creatorId);
-            if (lots == null || !lots.Any())
+            var result = await _lotService.GetLotsByCreatorIdAsync(creatorId);
+            if (result.IsFailure)
                 return NotFound();
-
-            return Ok(lots);
+            return Ok(result.Value);
         }
 
         [HttpPut("{id:guid}")]
         [Authorize]
         public async Task<IActionResult> UpdateLot(Guid id, [FromBody] LotUpdateRequest request)
         {
-            var lot = await _lotService.UpdateLotByIdAsync(id, request);
-            if (lot == null)
-                return NotFound();
-
-            return Ok(lot);
+            var result = await _lotService.UpdateLotByIdAsync(id, request);
+            if (result.IsFailure)
+                return NotFound(result.Error);
+            return Ok(result.Value);
         }
 
         [HttpDelete("{id:guid}")]
@@ -62,9 +62,8 @@ namespace AuctionHub.Controllers
         public async Task<IActionResult> DeleteLot(Guid id)
         {
             var result = await _lotService.DeleteLotAsync(id);
-            if (!result)
-                return BadRequest(result);
-
+            if (result.IsFailure)
+                return BadRequest(result.Error);
             return NoContent();
         }
 

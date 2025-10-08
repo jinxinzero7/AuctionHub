@@ -1,4 +1,5 @@
 ﻿using Domain.Interfaces.DTOInterfaces;
+using Domain.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,10 @@ namespace Domain.Interfaces
 {
     public interface ILotService
     {
-        Task<ILotResponse> CreateLotAsync(ILotCreateRequest request);
-        Task<ILotResponse> GetLotByIdAsync(Guid id);
-        Task<IEnumerable<ILotResponse>> GetLotsByCreatorIdAsync(Guid creatorId);
-        Task<ILotResponse> UpdateLotByIdAsync(Guid id, ILotUpdateRequest request);
-        Task<bool> DeleteLotAsync(Guid id);
+        Task<Result<ILotResponse>> CreateLotAsync(ILotCreateRequest request);
+        Task<Result<ILotResponse>> GetLotByIdAsync(Guid id);
+        Task<Result<IEnumerable<ILotResponse>>> GetLotsByCreatorIdAsync(Guid creatorId);
+        Task<Result<ILotResponse>> UpdateLotByIdAsync(Guid id, ILotUpdateRequest request);
+        Task<Result> DeleteLotAsync(Guid id);
     }
 }
