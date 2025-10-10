@@ -1,4 +1,5 @@
 ﻿using Application.DTOs;
+using Application.Mappings;
 using Domain.Interfaces;
 using Domain.Interfaces.DTOInterfaces;
 using Domain.Interfaces.Jwt;
@@ -50,27 +51,16 @@ namespace Application.Services
                     return Result.Failure<IUserResponse>($"User with email '{request.Email}' already exists.");
                 }
 
-            var newUser = new User
-            {
-                Id = Guid.NewGuid(),
-                Email = request.Email,
-                Username = request.Username,
-            };
+            // Mapping с помощью UserMappings
+            var newUser = UserMappings.ToUser(request);
 
-
+            // Хеширование пароля
             newUser.PasswordHash = _passwordHasher.HashPassword(newUser, request.Password);
 
             // Сохранение пользователя в базе данных
             await _userRepository.CreateUserAsync(newUser);
 
-            var userResponse = new UserResponse
-            {
-                Id = newUser.Id,
-                Email = newUser.Email,
-                Username = newUser.Username
-            };
-
-            return Result.Success<IUserResponse>(userResponse);
+            return Result.Success<IUserResponse>(newUser.ToUserResponse());
 
         }
         public async Task<Result<string>> LoginAsync(ILoginUserRequest request)
@@ -110,13 +100,8 @@ namespace Application.Services
             {
                 return Result.Failure<IUserResponse>("User not found");
             }
-            var userResponse = new UserResponse
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Username = user.Username
-            };
-            return Result.Success<IUserResponse>(userResponse);
+            
+            return Result.Success<IUserResponse>(user.ToUserResponse());
         }
 
         public async Task<Result<IUserResponse>> UpdateUserAsync(Guid userId, IUpdateUserRequest request)
@@ -135,6 +120,7 @@ namespace Application.Services
                     return Result.Failure<IUserResponse>($"Email '{request.Email}' is already taken");
             }
 
+            
             if (request.Username != null)
                 user.Username = request.Username;
             if (request.Email != null)
@@ -144,26 +130,15 @@ namespace Application.Services
 
             await _userRepository.UpdateUserAsync(user);
 
-            var userResponse = new UserResponse
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Username = user.Username
-            };
-            return Result.Success<IUserResponse>(userResponse);
+            
+            return Result.Success<IUserResponse>(user.ToUserResponse());
         }
 
         public async Task<Result<IEnumerable<IUserResponse>>> GetAllUsersAsync()
         {
             var users = await _userRepository.GetAllUsersAsync();
-            var usersResponse = users.Select(user => new UserResponse
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Username = user.Username
-            }).ToList();
 
-            return Result.Success<IEnumerable<IUserResponse>>(usersResponse);
+            return Result.Success<IEnumerable<IUserResponse>>(users.ToUserResponse());
         }
     }
 }
