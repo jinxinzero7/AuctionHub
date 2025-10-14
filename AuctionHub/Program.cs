@@ -1,14 +1,9 @@
 using Application.Services;
-using Domain.Interfaces;
-using Domain.Interfaces.Jwt;
-using Domain.Interfaces.PassHasher;
-using Infrastructure;
-using Infrastructure.Repositories;
-using Infrastructure.Services;
-using JwtProvider;
-using Microsoft.EntityFrameworkCore;
-using PasswordHashProvider;
 using FluentValidation;
+using Application;
+using JwtProvider;
+using Infrastructure;
+using PasswordHashProvider;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,17 +16,15 @@ builder.Services.AddOpenApi();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddJwtProvider();
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddPasswordHashProvider();
+builder.Services.AddAuth(builder.Configuration);
+builder.Services.AddApplication();
 
 // Позже прописать валидацию тут
 
 builder.Services.Configure<AuthSettings>(
     builder.Configuration.GetSection("AuthSettings"));
-builder.Services.AddAuth(builder.Configuration);
-
-builder.Services.AddDbContext<AuctionDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
