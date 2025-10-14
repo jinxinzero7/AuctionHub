@@ -66,7 +66,6 @@ namespace Infrastructure
 
             // Индексы для часто используемых полей
 
-            builder.HasIndex(u => u.Username).IsUnique();
             builder.HasIndex(u => u.Email).IsUnique();
         }
     }
