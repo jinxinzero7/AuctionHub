@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.Interfaces;
-using Domain.Interfaces.DTOInterfaces;
 using Domain.Models;
 using Application.DTOs;
-using Microsoft.EntityFrameworkCore.Storage;
 using Domain.Results;
 using Application.Mappings;
 using Domain.Enums;
@@ -29,7 +27,7 @@ namespace Infrastructure.Services
             _lotRepository = lotRepository;
         }
 
-        public async Task<Result<IBidResponse>> CreateBidAsync(Guid lotId, IBidCreateRequest request)
+        public async Task<Result<BidResponse>> CreateBidAsync(Guid lotId, BidCreateRequest request)
         {
             // Get Current Entities
             var currentUserId = _currentUserService.GetCurrentUserId();
@@ -38,19 +36,19 @@ namespace Infrastructure.Services
 
             // Validation
             if (currentLot == null)
-                return Result.Failure<IBidResponse>("Ошибка: Лот не найден", ErrorType.NotFound); 
+                return Result.Failure<BidResponse>("Ошибка: Лот не найден", ErrorType.NotFound); 
 
             if (currentLot.IsCompleted || currentLot.EndDate < DateTime.UtcNow)
-                return Result.Failure<IBidResponse>("Ошибка: Аукцион завершен");
+                return Result.Failure<BidResponse>("Ошибка: Аукцион завершен");
 
             if (currentLot.CreatorId == currentUserId)
-                return Result.Failure<IBidResponse>("Ошибка: Нельзя делать ставки на свои лоты");
+                return Result.Failure<BidResponse>("Ошибка: Нельзя делать ставки на свои лоты");
 
             var currentPrice = currentLot.CurrentPrice ?? currentLot.StartingPrice; // Calculationg current price 
             var minimumBid = currentPrice + currentLot.BidIncrement;
 
             if (request.Amount < minimumBid)
-                return Result.Failure<IBidResponse>($"Ошибка: Минимальная ставка: {minimumBid}");
+                return Result.Failure<BidResponse>($"Ошибка: Минимальная ставка: {minimumBid}");
                 
             // Mapping
             var newBid = BidMappings.ToBid(request, currentLot, currentUser);
@@ -61,25 +59,25 @@ namespace Infrastructure.Services
 
             await _bidRepository.CreateBidAsync(newBid);
 
-            return Result.Success<IBidResponse>(newBid.ToBidResponse());
+            return Result.Success<BidResponse>(newBid.ToBidResponse());
         }
-        public async Task<Result<IBidResponse>> GetBidByIdAsync(Guid lotId, Guid bidId)
+        public async Task<Result<BidResponse>> GetBidByIdAsync(Guid lotId, Guid bidId)
         {
             var bid = await _bidRepository.GetBidByIdAsync(lotId, bidId);
 
             if(bid == null)
-                return Result.Failure<IBidResponse>("Ошибка: Ставка не найдена", ErrorType.NotFound);
+                return Result.Failure<BidResponse>("Ошибка: Ставка не найдена", ErrorType.NotFound);
 
-            return Result.Success<IBidResponse>(bid.ToBidResponse());
+            return Result.Success<BidResponse>(bid.ToBidResponse());
         }
-        public async Task<Result<IEnumerable<IBidResponse>>> GetBidsByLotIdAsync(Guid lotId)
+        public async Task<Result<IEnumerable<BidResponse>>> GetBidsByLotIdAsync(Guid lotId)
         {
             var bids = await _bidRepository.GetBidsByLotIdAsync(lotId);
 
             if(bids == null)
-                return Result.Failure<IEnumerable<IBidResponse>>("Ставки по данному лоту не найдены", ErrorType.NotFound);
+                return Result.Failure<IEnumerable<BidResponse>>("Ставки по данному лоту не найдены", ErrorType.NotFound);
 
-            return Result.Success<IEnumerable<IBidResponse>>(bids.ToBidResponse());
+            return Result.Success<IEnumerable<BidResponse>>(bids.ToBidResponse());
         }
         public async Task<Result> DeleteBidByIdAsync(Guid lotId, Guid bidId)
         {
