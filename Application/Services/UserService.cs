@@ -1,7 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Mappings;
 using Domain.Interfaces;
-using Domain.Interfaces.DTOInterfaces;
 using Domain.Interfaces.Jwt;
 using Domain.Interfaces.PassHasher;
 using Domain.Models;
@@ -11,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Validators;
+using System.ComponentModel.DataAnnotations;
 
 namespace Application.Services
 {
@@ -20,35 +21,37 @@ namespace Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHashService _passwordHasher;
         private readonly IJwtService _jwtService;
+        private readonly RegisterUserRequestValidator _registerValidator;
+        private readonly LoginUserRequestValidator _loginValidator;
+        private readonly UpdateUserRequestValidator _updateValidator;
 
-        public UserService(IUserRepository userRepository, IPasswordHashService passwordHasher, 
-            IJwtService jwtService)
+        public UserService(IUserRepository userRepository,
+            IPasswordHashService passwordHasher,
+            IJwtService jwtService,
+            RegisterUserRequestValidator registerValidator,
+            LoginUserRequestValidator loginValidator,
+            UpdateUserRequestValidator updateValidator)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _jwtService = jwtService;
+            _registerValidator = registerValidator;
+            _loginValidator = loginValidator;
+            _updateValidator = updateValidator;
         }
 
-        public async Task<Result<IUserResponse>> RegisterAsync(IRegisterUserRequest request)
+        public async Task<Result<UserResponse>> RegisterAsync(RegisterUserRequest request)
         {
-            if (request == null)
-                return Result.Failure<IUserResponse>("Request cannot be null");
-
-            if (string.IsNullOrWhiteSpace(request.Username))
-                return Result.Failure<IUserResponse>("Username is required");
-                
-            if (string.IsNullOrWhiteSpace(request.Email))
-                return Result.Failure<IUserResponse>("Email is required");
-
-            if (string.IsNullOrWhiteSpace(request.Password))
-                return Result.Failure<IUserResponse>("Password is required");
-
-            if (request.Password.Length < 6)
-                return Result.Failure<IUserResponse>("Password must be at least 6 characters");
+            var validationResult = await _registerValidator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+                return Result.Failure<UserResponse>($"Validation failed: {errors}");
+            }
 
             if (await _userRepository.GetUserByEmailAsync(request.Email) != null)
                 {
-                    return Result.Failure<IUserResponse>($"User with email '{request.Email}' already exists.");
+                    return Result.Failure<UserResponse>($"User with email '{request.Email}' already exists.");
                 }
 
             // Mapping с помощью UserMappings
@@ -60,20 +63,22 @@ namespace Application.Services
             // Сохранение пользователя в базе данных
             await _userRepository.CreateUserAsync(newUser);
 
-            return Result.Success<IUserResponse>(newUser.ToUserResponse());
+            return Result.Success<UserResponse>(newUser.ToUserResponse());
 
         }
-        public async Task<Result<string>> LoginAsync(ILoginUserRequest request)
+        public async Task<Result<string>> LoginAsync(LoginUserRequest request)
         {
-            //проверка пустого req
-            if (request == null)
-                return Result.Failure<string>("Request cannot be null");
-                
-            if (string.IsNullOrWhiteSpace(request.Email))
-                return Result.Failure<string>("Invalid email or password");
+            var validationResult = await _loginValidator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+                return Result.Failure<string>($"Validation failed: {errors}");
+            }
 
-            if (string.IsNullOrWhiteSpace(request.Password))
-                return Result.Failure<string>("Invalid email or password");
+            if (await _userRepository.GetUserByEmailAsync(request.Email) != null)
+            {
+                return Result.Failure<string>($"User with email '{request.Email}' already exists.");
+            }
 
             //проверка существования user с email из request
             var existingUser = await _userRepository.GetUserByEmailAsync(request.Email);
@@ -93,23 +98,30 @@ namespace Application.Services
             }
         }
 
-        public async Task<Result<IUserResponse>> GetUserAsync(Guid userId)
+        public async Task<Result<UserResponse>> GetUserAsync(Guid userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
-                return Result.Failure<IUserResponse>("User not found");
+                return Result.Failure<UserResponse>("User not found");
             }
             
-            return Result.Success<IUserResponse>(user.ToUserResponse());
+            return Result.Success<UserResponse>(user.ToUserResponse());
         }
 
-        public async Task<Result<IUserResponse>> UpdateUserAsync(Guid userId, IUpdateUserRequest request)
+        public async Task<Result<UserResponse>> UpdateUserAsync(Guid userId, UpdateUserRequest request)
         {
+            var validationResult = await _updateValidator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+                return Result.Failure<UserResponse>($"Validation failed: {errors}");
+            }
+
             var user = await _userRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
-                return Result.Failure<IUserResponse>("User not found");
+                return Result.Failure<UserResponse>("User not found");
             }
 
             // Проверка занятости email, если он меняется
@@ -117,10 +129,8 @@ namespace Application.Services
             {
                 var existingUser = await _userRepository.GetUserByEmailAsync(request.Email);
                 if (existingUser != null)
-                    return Result.Failure<IUserResponse>($"Email '{request.Email}' is already taken");
+                    return Result.Failure<UserResponse>($"Email '{request.Email}' is already taken");
             }
-
-            
             if (request.Username != null)
                 user.Username = request.Username;
             if (request.Email != null)
@@ -130,15 +140,13 @@ namespace Application.Services
 
             await _userRepository.UpdateUserAsync(user);
 
-            
-            return Result.Success<IUserResponse>(user.ToUserResponse());
+            return Result.Success<UserResponse>(user.ToUserResponse());
         }
 
-        public async Task<Result<IEnumerable<IUserResponse>>> GetAllUsersAsync()
+        public async Task<Result<IEnumerable<UserResponse>>> GetAllUsersAsync()
         {
             var users = await _userRepository.GetAllUsersAsync();
-
-            return Result.Success<IEnumerable<IUserResponse>>(users.ToUserResponse());
+            return Result.Success<IEnumerable<UserResponse>>(users.ToUserResponse());
         }
     }
 }

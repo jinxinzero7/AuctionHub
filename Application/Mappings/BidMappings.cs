@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.DTOs;
-using Domain.Interfaces.DTOInterfaces;
 using Domain.Models;
 
 namespace Application.Mappings
@@ -27,7 +26,7 @@ namespace Application.Mappings
             return bids.Select(bids => bids.ToBidResponse()).OrderByDescending(b => b.Amount).ToList();
         }
 
-        public static Bid ToBid(IBidCreateRequest request, Lot currentLot, User currentUser)
+        public static Bid ToBid(BidCreateRequest request, Lot currentLot, User currentUser)
         {
             return new Bid
             {

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.DTOs;
 using Domain.Models;
-using Domain.Interfaces.DTOInterfaces;
 
 namespace Application.Mappings
 {
@@ -25,7 +24,7 @@ namespace Application.Mappings
             return users.Select(user => user.ToUserResponse()).ToList();
         }
 
-        public static User ToUser(IRegisterUserRequest request)
+        public static User ToUser(RegisterUserRequest request)
         {
             return new User
             {

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Interfaces;
 using Application.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using Domain.Interfaces.DTOInterfaces;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 
 namespace AuctionHub.Controllers
