@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using JwtProvider;
 using Microsoft.EntityFrameworkCore;
 using PasswordHashProvider;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,7 @@ builder.Services.AddJwtProvider();
 builder.Services.AddInfrastructure();
 builder.Services.AddPasswordHashProvider();
 
+// Позже прописать валидацию тут
 
 builder.Services.Configure<AuthSettings>(
     builder.Configuration.GetSection("AuthSettings"));

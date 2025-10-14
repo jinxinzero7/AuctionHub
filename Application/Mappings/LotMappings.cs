@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.DTOs;
 using Domain.Models;
-using Domain.Interfaces.DTOInterfaces;
 
 namespace Application.Mappings
 {
@@ -33,7 +32,7 @@ namespace Application.Mappings
             return lots.Select(lots => lots.ToLotResponse()).ToList();
         }
 
-        public static Lot ToLot(ILotCreateRequest request, User currentUser)
+        public static Lot ToLot(LotCreateRequest request, User currentUser)
         {
             return new Lot
             {

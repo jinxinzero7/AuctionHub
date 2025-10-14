@@ -1,6 +1,5 @@
 ﻿using Application.DTOs;
 using Domain.Interfaces;
-using Domain.Interfaces.DTOInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

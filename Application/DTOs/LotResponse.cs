@@ -1,5 +1,4 @@
-﻿using Domain.Interfaces.DTOInterfaces;
-using Domain.Models;
+﻿using Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs
 {
-    public class LotResponse : ILotResponse
+    public class LotResponse
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
