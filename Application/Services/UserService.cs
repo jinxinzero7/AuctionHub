@@ -50,9 +50,9 @@ namespace Application.Services
             }
 
             if (await _userRepository.GetUserByEmailAsync(request.Email) != null)
-                {
-                    return Result.Failure<UserResponse>($"User with email '{request.Email}' already exists.");
-                }
+            {
+                return Result.Failure<UserResponse>($"User with email '{request.Email}' already exists.");
+            }
 
             // Mapping с помощью UserMappings
             var newUser = UserMappings.ToUser(request);
@@ -73,11 +73,6 @@ namespace Application.Services
             {
                 var errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
                 return Result.Failure<string>($"Validation failed: {errors}");
-            }
-
-            if (await _userRepository.GetUserByEmailAsync(request.Email) != null)
-            {
-                return Result.Failure<string>($"User with email '{request.Email}' already exists.");
             }
 
             //проверка существования user с email из request

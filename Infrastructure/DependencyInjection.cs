@@ -1,9 +1,9 @@
-﻿using Application.Services;
-using Domain.Interfaces;
+﻿using Domain.Interfaces;
 using Domain.Interfaces.Jwt;
 using Domain.Interfaces.PassHasher;
 using Infrastructure.Repositories;
-using Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -15,15 +15,13 @@ namespace Infrastructure
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<ILotService, LotService>();
+            services.AddDbContext<AuctionDbContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ILotRepository, LotRepository>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddScoped<ILotService, LotService>();
-            services.AddScoped<IBidService, BidService>();
             services.AddScoped<IBidRepository, BidRepository>();
             return services;
         }

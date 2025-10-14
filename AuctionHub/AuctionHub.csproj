@@ -21,8 +21,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
-    <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\JwtProvider\JwtProvider.csproj" />
     <ProjectReference Include="..\PasswordHashProvider\PasswordHashProvider.csproj" />
   </ItemGroup>

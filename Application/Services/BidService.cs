@@ -9,7 +9,7 @@ using Domain.Results;
 using Application.Mappings;
 using Domain.Enums;
 
-namespace Infrastructure.Services
+namespace Application.Services
 {
     public class BidService : IBidService
     {
