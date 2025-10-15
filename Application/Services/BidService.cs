@@ -8,6 +8,7 @@ using Application.DTOs;
 using Domain.Results;
 using Application.Mappings;
 using Domain.Enums;
+using FluentValidation;
 
 namespace Application.Services
 {
@@ -17,18 +18,28 @@ namespace Application.Services
         private readonly ICurrentUserService _currentUserService;
         private readonly IUserRepository _userRepository;
         private readonly ILotRepository _lotRepository;
+        private readonly IValidator<BidCreateRequest> _bidCreateValidator;
 
         public BidService(IBidRepository bidRepository, ICurrentUserService currentUserService,
-        IUserRepository userRepository, ILotRepository lotRepository)
+        IUserRepository userRepository, ILotRepository lotRepository, IValidator<BidCreateRequest> bidCreateValidator)
         {
             _bidRepository = bidRepository;
             _currentUserService = currentUserService;
             _userRepository = userRepository;
             _lotRepository = lotRepository;
+            _bidCreateValidator = bidCreateValidator;
         }
 
         public async Task<Result<BidResponse>> CreateBidAsync(Guid lotId, BidCreateRequest request)
         {
+            // Validation
+            var validationResult = await _bidCreateValidator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+                return Result.Failure<BidResponse>($"Validation failed: {errors}");
+            }
+
             // Get Current Entities
             var currentUserId = _currentUserService.GetCurrentUserId();
             var currentUser = await _userRepository.GetUserByIdAsync(currentUserId);

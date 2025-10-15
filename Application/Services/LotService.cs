@@ -3,6 +3,7 @@ using Application.Mappings;
 using Domain.Interfaces;
 using Domain.Models;
 using Domain.Results;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,17 +17,32 @@ namespace Application.Services
         private readonly IUserRepository _userRepository;
         private readonly ILotRepository _lotRepository;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IValidator<LotCreateRequest> _createLotValidator;
+        private readonly IValidator<LotUpdateRequest> _updateLotValidator;
 
-        public LotService(ILotRepository lotRepository, ICurrentUserService currentUserService,
-            IUserRepository userRepository)
+        public LotService(ILotRepository lotRepository,
+            ICurrentUserService currentUserService,
+            IUserRepository userRepository,
+            IValidator<LotCreateRequest> createLotValidator,
+            IValidator<LotUpdateRequest> updateLotValidator)
         {
             _lotRepository = lotRepository;
             _currentUserService = currentUserService;
             _userRepository = userRepository;
+            _createLotValidator = createLotValidator;
+            _updateLotValidator = updateLotValidator;
         }
         
         public async Task<Result<LotResponse>> CreateLotAsync(LotCreateRequest request)
         {
+            // Валидация
+            var validationResult = await _createLotValidator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+                return Result.Failure<LotResponse>($"Validation failed: {errors}");
+            }
+
             var currentUserId = _currentUserService.GetCurrentUserId();
             var currentUser = await _userRepository.GetUserByIdAsync(currentUserId);
 
@@ -48,6 +64,14 @@ namespace Application.Services
         }
         public async Task<Result<LotResponse>> UpdateLotByIdAsync(Guid id, LotUpdateRequest request)
         {
+            // Валидация
+            var validationResult = await _updateLotValidator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+                return Result.Failure<LotResponse>($"Validation failed: {errors}");
+            }
+
             var lot = await _lotRepository.GetLotByIdAsync(id);
 
             if (lot == null)
@@ -55,13 +79,25 @@ namespace Application.Services
 
             if (lot.Bids != null && lot.Bids.Any())
                 return Result.Failure<LotResponse>("Ошибка: Лот не может быть изменен если у него уже есть ставки");
-           
-            lot.Title = request.Title;
-            lot.Description = request.Description;
-            lot.StartingPrice = request.StartingPrice;
-            lot.BidIncrement = request.BidIncrement;
-            lot.EndDate = request.EndDate;
-            lot.ImageUrl = request.ImageUrl;
+
+            // Обновляем только те поля, которые предоставлены в request          
+            if (!string.IsNullOrEmpty(request.Title))
+                lot.Title = request.Title; // Изменяем поле, если оно не пустое
+                
+            if (!string.IsNullOrEmpty(request.Description))
+                lot.Description = request.Description;
+                
+            if (request.StartingPrice > 0)
+                lot.StartingPrice = request.StartingPrice;
+                
+            if (request.BidIncrement > 0)
+                lot.BidIncrement = request.BidIncrement;
+                
+            if (request.EndDate != default)
+                lot.EndDate = request.EndDate;
+                
+            if (!string.IsNullOrEmpty(request.ImageUrl))
+                lot.ImageUrl = request.ImageUrl;
 
             await _lotRepository.UpdateLotAsync(lot);
             
@@ -72,6 +108,8 @@ namespace Application.Services
             var lot = await _lotRepository.GetLotByIdAsync(id);
             if (lot == null)
                 return Result.Failure("Ошибка: Лот не найден");
+            if (lot.Bids != null && lot.Bids.Any())
+                return Result.Failure<LotResponse>("Ошибка: Лот не может быть удален, если у него уже есть ставки");
             await _lotRepository.DeleteLotAsync(lot);
             return Result.Success();
         }
