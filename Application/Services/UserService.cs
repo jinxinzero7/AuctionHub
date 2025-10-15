@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Validators;
 using System.ComponentModel.DataAnnotations;
+using FluentValidation;
 
 namespace Application.Services
 {
@@ -21,16 +22,16 @@ namespace Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHashService _passwordHasher;
         private readonly IJwtService _jwtService;
-        private readonly RegisterUserRequestValidator _registerValidator;
-        private readonly LoginUserRequestValidator _loginValidator;
-        private readonly UpdateUserRequestValidator _updateValidator;
+        private readonly IValidator<RegisterUserRequest> _registerValidator;
+        private readonly IValidator<LoginUserRequest> _loginValidator;
+        private readonly IValidator<UpdateUserRequest> _updateValidator;
 
         public UserService(IUserRepository userRepository,
             IPasswordHashService passwordHasher,
             IJwtService jwtService,
-            RegisterUserRequestValidator registerValidator,
-            LoginUserRequestValidator loginValidator,
-            UpdateUserRequestValidator updateValidator)
+            IValidator<RegisterUserRequest> registerValidator,
+            IValidator<LoginUserRequest> loginValidator,
+            IValidator<UpdateUserRequest> updateValidator)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
